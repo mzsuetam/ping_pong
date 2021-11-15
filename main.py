@@ -3,7 +3,7 @@ pg.font.init()
 import os
 from random import randint as rd
 
-D_WIDTH, D_HEIGHT = 1920, 1080 
+D_WIDTH, D_HEIGHT = 1200, 800
 WIN = pg.display.set_mode((D_WIDTH, D_HEIGHT)) 
 pg.display.set_caption("Ping Pong")
 BACKGROUND = pg.Rect(0,0,D_WIDTH, D_HEIGHT)
@@ -22,6 +22,7 @@ BALL_IMG=pg.transform.scale(BALL_IMG,(25,25))
 MAX_POINTS=5
 VEL=5
 BALL_VEL=5
+ball_prev_pos=[D_WIDTH/2-12.5,D_HEIGHT/2-12.5]
 
 
 def draw_window(pl_A, pl_B, ball, A_points, B_points):
@@ -53,15 +54,19 @@ def handle_movement_B(keys_pressed, pl_B):
 	if keys_pressed[pg.K_DOWN] and pl_B.y+VEL+pl_B.height<D_HEIGHT:
 		pl_B.y+=VEL
 
-def handle_movement_ball(ball, d_x, d_y, pl_A, pl_B):
-	if (d_y==0):
-		d_y=-1
-	if ball.y<=5 or ball.y>=D_HEIGHT-ball.height-5:
-		ball.y-=BALL_VEL*d_y
+def handle_movement_ball(ball, pl_A, pl_B):
+	D=[ball.x-ball_prev_pos[0],ball.y-ball_prev_pos[1]]
+	if ball.y>0 and ball.y<D_HEIGHT-ball.height:
+		if D[1]>0:
+			ball_prev_pos[1]=ball.y
+			ball.y+=BALL_VEL
+		else:
+			ball_prev_pos[1]=ball.y
+			ball.y-=BALL_VEL
 	else:
-		ball.y+=BALL_VEL*d_y
-		
-	#ball.x+=BALL_VEL*d_x
+		a=ball_prev_pos[1]
+		ball_prev_pos[1]=ball.y
+		ball.y=a
 
 def main():
 
@@ -72,10 +77,10 @@ def main():
 
 	ball = pg.Rect(D_WIDTH//2-12.5, D_HEIGHT//2-12.5,25,25)
 	if rd(0,1):
-		ball_dir_x=-rd(1,10)/10
+		ball_prev_pos[0]=-rd(1,10)/10
 	else:
-		ball_dir_x=rd(1,10)/10
-	ball_dir_y=rd(0,2)
+		ball_prev_pos[0]=rd(1,10)/10
+	ball_prev_pos[1]=ball.y+rd(1,3)-1.5
 
 	A_points, B_points = 0,0
 
@@ -94,7 +99,7 @@ def main():
 		handle_movement_A(keys_pressed, pl_A)
 		handle_movement_B(keys_pressed, pl_B)
 
-		handle_movement_ball(ball,ball_dir_x, ball_dir_y, pl_A, pl_B)
+		handle_movement_ball(ball, pl_A, pl_B)
 
 		#win_handling
 		winner_text=""
