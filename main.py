@@ -18,6 +18,7 @@ BLUE = (0,0,255)
 
 POINTS_FONT=pg.font.SysFont('Arial', 100)
 MESSAGE_FONT=pg.font.SysFont('Arial', 120)
+COUNTDOWN_FONT=pg.font.SysFont('Arial', 80)
 BALL_IMG=pg.image.load(os.path.join('resources','ball.png'))
 BALL_IMG=pg.transform.scale(BALL_IMG,(25,25))
 
@@ -28,7 +29,7 @@ ball_prev_pos=[D_WIDTH/2-12.5,D_HEIGHT/2-12.5]
 ball_dir=rd(5,11)/10
 
 
-def draw_window(pl_A, pl_B, ball, points, message):
+def draw_window(pl_A, pl_B, ball, points, message, countdown):
 	#WIN.fill(WHITE)
 
 	pg.draw.rect(WIN, BLACK, BACKGROUND)
@@ -44,8 +45,9 @@ def draw_window(pl_A, pl_B, ball, points, message):
 	WIN.blit(BALL_IMG, (ball.x, ball.y))
 
 	message_text=MESSAGE_FONT.render(message,1,WHITE)
-	WIN.blit(message_text,(D_WIDTH//2-message_text.get_width()//2,D_HEIGHT//2-message_text.get_height()//2)
-	)
+	WIN.blit(message_text,(D_WIDTH//2-message_text.get_width()//2,D_HEIGHT//2-message_text.get_height()//2))
+	countdown_text=COUNTDOWN_FONT.render(countdown,1,GREY)
+	WIN.blit(countdown_text,(D_WIDTH//2-countdown_text.get_width()//2,D_HEIGHT//2-countdown_text.get_height()//2+message_text.get_height()))
 
 	pg.display.update() 
 
@@ -105,8 +107,11 @@ def handle_score(pl_A, pl_B, ball, points):
 			#A scored
 			points[0]+=1
 			mess="RED SCORED!"
-		draw_window(pl_A, pl_B, ball, points, mess)
-		time.sleep(3)
+		countdown_text="Next round in "
+		if points[0]<MAX_POINTS and points[1]<MAX_POINTS:
+			for i in range(3,0,-1):
+				draw_window(pl_A, pl_B, ball, points, mess, countdown_text+str(i))
+				time.sleep(1)
 		play_init(ball)
 		
 
@@ -148,13 +153,21 @@ def main():
 				mess="RED Wins!"
 			if points[1] >=MAX_POINTS:
 				mess="BLUE WINS!"
-			draw_window(pl_A, pl_B, ball, points, mess)
-			time.sleep(5)
+			draw_window(pl_A, pl_B, ball, points, mess, "New game in 5")
+			time.sleep(1)
+			draw_window(pl_A, pl_B, ball, points, mess, "New game in 4")
+			time.sleep(1)
+			draw_window(pl_A, pl_B, ball, points, mess, "New game in 3")
+			time.sleep(1)
+			draw_window(pl_A, pl_B, ball, points, mess, "New game in 2")
+			time.sleep(1)
+			draw_window(pl_A, pl_B, ball, points, mess, "New game in 1")
+			time.sleep(1)
 			break
 			
 
 		#UPDATING_WINDOW
-		draw_window(pl_A, pl_B, ball, points, "")
+		draw_window(pl_A, pl_B, ball, points, "","")
 
 	main()
 
