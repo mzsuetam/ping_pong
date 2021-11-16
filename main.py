@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import key
 pg.font.init()
 import os
 from random import randint as rd
@@ -72,7 +73,8 @@ def handle_movement_B(keys_pressed, pl_B):
 	if keys_pressed[pg.K_DOWN] and pl_B.y+VEL+pl_B.height<D_HEIGHT:
 		pl_B.y+=VEL
 
-def handle_movement_ball(ball, pl_A, pl_B):
+def handle_movement_ball(ball, pl_A, pl_B,keys_pressed):
+	global ball_dir
 	D=[ball.x-ball_prev_pos[0],ball.y-ball_prev_pos[1]]
 
 	if ball.y>0 and ball.y<D_HEIGHT-ball.height:
@@ -94,10 +96,15 @@ def handle_movement_ball(ball, pl_A, pl_B):
 		ball_prev_pos[0]=ball.x
 		ball.x-=BALL_VEL*ball_dir
 
-	if (ball.colliderect(pl_A) and ball.x>pl_A.x) or (ball.colliderect(pl_B) and ball.x<pl_B.x):
+	if ball.colliderect(pl_A) or ball.colliderect(pl_B):
 		a=ball_prev_pos[0]
 		ball_prev_pos[0]=ball.x
 		ball.x=a
+		if keys_pressed[pg.K_UP]:
+			ball_dir-=0.2
+		if keys_pressed[pg.K_DOWN]:
+			ball_dir+=0.2
+
 
 def handle_score(pl_A, pl_B, ball, points):
 	if ball.x<0 or ball.x>D_WIDTH-ball.width:
@@ -127,10 +134,9 @@ def main():
 
 	ball = pg.Rect(0,0,25,25)
 	play_init(ball)
+	print(ball_dir)
 
 	points=[0,0]
-
-	print(ball_prev_pos[0]-ball.x)
 
 	game_run = True
 	while game_run: 
@@ -146,7 +152,7 @@ def main():
 		handle_movement_A(pl_A, ball)
 		handle_movement_B(keys_pressed, pl_B)
 
-		handle_movement_ball(ball, pl_A, pl_B)
+		handle_movement_ball(ball, pl_A, pl_B,keys_pressed)
 
 		handle_score(pl_A, pl_B, ball, points)
 
