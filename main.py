@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import key
 pg.font.init()
 import os
 from random import randint as rd
@@ -52,24 +53,27 @@ def draw_window(pl_A, pl_B, ball, points, message, countdown):
 	pg.display.update() 
 
 def play_init(ball):
+	global ball_dir
 	ball_dir=rd(5,11)/10
 	ball.x, ball.y = D_WIDTH//2-12.5, D_HEIGHT//2-12.5
 	ball_prev_pos[0]=ball.x+rd(1,3)-1.5
 	ball_prev_pos[1]=ball.y+rd(1,3)-1.5
 
-def handle_movement_A(keys_pressed, pl_A):
+def handle_movement_A(keys_pressed, pl_A, ball):
+	global ball_dir
 	if keys_pressed[pg.K_w] and pl_A.y>0:
 		pl_A.y-=VEL
 	if keys_pressed[pg.K_s] and pl_A.y+VEL+pl_A.height<D_HEIGHT:
 		pl_A.y+=VEL
 
-def handle_movement_B(keys_pressed, pl_B):
+def handle_movement_B(keys_pressed, pl_B,ball):
 	if keys_pressed[pg.K_UP] and pl_B.y>0:
 		pl_B.y-=VEL
 	if keys_pressed[pg.K_DOWN] and pl_B.y+VEL+pl_B.height<D_HEIGHT:
 		pl_B.y+=VEL
 
-def handle_movement_ball(ball, pl_A, pl_B):
+def handle_movement_ball(ball, pl_A, pl_B,keys_pressed):
+	global ball_dir
 	D=[ball.x-ball_prev_pos[0],ball.y-ball_prev_pos[1]]
 
 	if ball.y>0 and ball.y<D_HEIGHT-ball.height:
@@ -95,6 +99,11 @@ def handle_movement_ball(ball, pl_A, pl_B):
 		a=ball_prev_pos[0]
 		ball_prev_pos[0]=ball.x
 		ball.x=a
+		if keys_pressed[pg.K_w] or keys_pressed[pg.K_UP]:
+			ball_dir-=0.2
+		if keys_pressed[pg.K_s] or keys_pressed[pg.K_DOWN]:
+			ball_dir+=0.2
+
 
 def handle_score(pl_A, pl_B, ball, points):
 	if ball.x<0 or ball.x>D_WIDTH-ball.width:
@@ -124,10 +133,9 @@ def main():
 
 	ball = pg.Rect(0,0,25,25)
 	play_init(ball)
+	print(ball_dir)
 
 	points=[0,0]
-
-	print(ball_prev_pos[0]-ball.x)
 
 	game_run = True
 	while game_run: 
@@ -140,10 +148,10 @@ def main():
 		
 		#movement_handeling:
 		keys_pressed=pg.key.get_pressed()
-		handle_movement_A(keys_pressed, pl_A)
-		handle_movement_B(keys_pressed, pl_B)
+		handle_movement_A(keys_pressed, pl_A,ball)
+		handle_movement_B(keys_pressed, pl_B,ball)
 
-		handle_movement_ball(ball, pl_A, pl_B)
+		handle_movement_ball(ball, pl_A, pl_B,keys_pressed)
 
 		handle_score(pl_A, pl_B, ball, points)
 
