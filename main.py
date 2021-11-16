@@ -53,6 +53,7 @@ def draw_window(pl_A, pl_B, ball, points, message, countdown):
 	pg.display.update() 
 
 def play_init(ball):
+	global ball_dir
 	ball_dir=rd(5,11)/10
 	ball.x, ball.y = D_WIDTH//2-12.5, D_HEIGHT//2-12.5
 	ball_prev_pos[0]=ball.x+rd(1,3)-1.5
