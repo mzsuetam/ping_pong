@@ -24,6 +24,7 @@ BALL_IMG=pg.transform.scale(BALL_IMG,(25,25))
 
 MAX_POINTS=5
 VEL=5
+AI_VEL=VEL
 BALL_VEL=5
 ball_prev_pos=[D_WIDTH/2-12.5,D_HEIGHT/2-12.5]
 ball_dir=rd(5,11)/10
@@ -57,11 +58,12 @@ def play_init(ball):
 	ball_prev_pos[0]=ball.x+rd(1,3)-1.5
 	ball_prev_pos[1]=ball.y+rd(1,3)-1.5
 
-def handle_movement_A(keys_pressed, pl_A):
-	if keys_pressed[pg.K_w] and pl_A.y>0:
-		pl_A.y-=VEL
-	if keys_pressed[pg.K_s] and pl_A.y+VEL+pl_A.height<D_HEIGHT:
-		pl_A.y+=VEL
+def handle_movement_A(pl_A, ball):
+	D=[ball.x-ball_prev_pos[0],ball.y-ball_prev_pos[1]]
+	if ball.y-ball.height/2 < pl_A.y and pl_A.y>0 and D[0]<0:
+		pl_A.y-=AI_VEL
+	if ball.y-ball.height/2 > pl_A.y and pl_A.y<D_HEIGHT-pl_A.height and D[0]<0:
+		pl_A.y+=AI_VEL
 
 def handle_movement_B(keys_pressed, pl_B):
 	if keys_pressed[pg.K_UP] and pl_B.y>0:
@@ -140,7 +142,7 @@ def main():
 		
 		#movement_handeling:
 		keys_pressed=pg.key.get_pressed()
-		handle_movement_A(keys_pressed, pl_A)
+		handle_movement_A(pl_A, ball)
 		handle_movement_B(keys_pressed, pl_B)
 
 		handle_movement_ball(ball, pl_A, pl_B)
