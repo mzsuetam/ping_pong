@@ -5,7 +5,7 @@ import os
 from random import randint as rd
 import time
 
-D_WIDTH, D_HEIGHT = 1200, 800
+D_WIDTH, D_HEIGHT = 1920, 1080
 WIN = pg.display.set_mode((D_WIDTH, D_HEIGHT)) 
 pg.display.set_caption("Ping Pong")
 BACKGROUND = pg.Rect(0,0,D_WIDTH, D_HEIGHT)
@@ -20,8 +20,8 @@ BLUE = (0,0,255)
 POINTS_FONT=pg.font.SysFont('Arial', 100)
 MESSAGE_FONT=pg.font.SysFont('Arial', 120)
 COUNTDOWN_FONT=pg.font.SysFont('Arial', 80)
-BALL_IMG=pg.image.load(os.path.join('resources','ball.png'))
-BALL_IMG=pg.transform.scale(BALL_IMG,(25,25))
+BALL_IMG=pg.image.load(os.path.join('resources','jp2.png'))
+BALL_IMG=pg.transform.scale(BALL_IMG,(100,100))
 
 MAX_POINTS=5
 VEL=5
@@ -67,11 +67,18 @@ def handle_movement_A(pl_A, ball):
 	if ball.y-ball.height/2 > pl_A.y and pl_A.y<D_HEIGHT-pl_A.height and D[0]<0:
 		pl_A.y+=AI_VEL
 
-def handle_movement_B(keys_pressed, pl_B):
-	if keys_pressed[pg.K_UP] and pl_B.y>0:
-		pl_B.y-=VEL
-	if keys_pressed[pg.K_DOWN] and pl_B.y+VEL+pl_B.height<D_HEIGHT:
-		pl_B.y+=VEL
+def handle_movement_B(keys_pressed, pl_B,ball):
+	# if keys_pressed[pg.K_UP] and pl_B.y>0:
+	# 	pl_B.y-=VEL
+	# if keys_pressed[pg.K_DOWN] and pl_B.y+VEL+pl_B.height<D_HEIGHT:
+	# 	pl_B.y+=VEL
+	D=[ball.x-ball_prev_pos[0],ball.y-ball_prev_pos[1]]
+	if ball.y-ball.height/2 < pl_B.y and pl_B.y>0 and D[0]>0:
+		pl_B.y-=AI_VEL
+	if ball.y-ball.height/2 > pl_B.y and pl_B.y<D_HEIGHT-pl_B.height and D[0]>0:
+		pl_B.y+=AI_VEL
+
+
 
 def handle_movement_ball(ball, pl_A, pl_B,keys_pressed):
 	global ball_dir
@@ -150,7 +157,7 @@ def main():
 		#movement_handeling:
 		keys_pressed=pg.key.get_pressed()
 		handle_movement_A(pl_A, ball)
-		handle_movement_B(keys_pressed, pl_B)
+		handle_movement_B(keys_pressed, pl_B,ball)
 
 		handle_movement_ball(ball, pl_A, pl_B,keys_pressed)
 
