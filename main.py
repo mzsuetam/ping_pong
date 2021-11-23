@@ -16,6 +16,7 @@ GREY = (50,50,50)
 BLACK = (0,0,0)
 RED = (255,0,0)
 BLUE = (0,0,255)
+#konflikt
 
 POINTS_FONT=pg.font.SysFont('Arial', 100)
 MESSAGE_FONT=pg.font.SysFont('Arial', 120)
